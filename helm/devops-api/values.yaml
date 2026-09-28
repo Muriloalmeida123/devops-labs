@@ -1,0 +1,14 @@
+namespace: devops-lab
+
+replicaCount: 2
+
+image:
+  repository: devops-api
+  tag: 0.1.0
+  pullPolicy: IfNotPresent
+
+service:
+  type: ClusterIP
+  port: 5000
+
+containerPort: 5000
