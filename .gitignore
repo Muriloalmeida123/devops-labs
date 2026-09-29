@@ -2,3 +2,6 @@
 __pycache__/
 app/.venv/
 
+# Ignorar Dockerfile e dockerignore
+Dockerfile
+.dockerignore
