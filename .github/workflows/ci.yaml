@@ -65,17 +65,18 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Set lowercase image name
+        run: |
+          OWNER=${{ github.repository_owner }}
+          echo "IMAGE=ghcr.io/${OWNER,,}/devops-api" >> "$GITHUB_ENV"
+          SHA=${{ github.sha }}
+          echo "SHORT_SHA=${SHA:0:7}" >> "$GITHUB_ENV"
+
       - name: Build image
         run: |
-          IMAGE=ghcr.io/${{ github.repository_owner }}/devops-api
-          SHA=${{ github.sha }}
-          SHORT_SHA=${SHA:0:7}
           docker build -t $IMAGE:$SHORT_SHA -t $IMAGE:latest .
 
       - name: Push image
         run: |
-          IMAGE=ghcr.io/${{ github.repository_owner }}/devops-api
-          SHA=${{ github.sha }}
-          SHORT_SHA=${SHA:0:7}
           docker push $IMAGE:$SHORT_SHA
           docker push $IMAGE:latest
