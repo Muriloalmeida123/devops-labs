@@ -3,7 +3,7 @@ namespace: devops-lab
 replicaCount: 2
 
 image:
-  repository: devops-api
+  repository: ghcr.io/muriloalmeida123/devops-api
   tag: 78ee365
   pullPolicy: IfNotPresent
 
