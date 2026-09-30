@@ -1,0 +1,23 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: devops-api
+  namespace: argocd
+spec:
+  project: default
+
+  source:
+    repoURL: https://github.com/Muriloalmeida123/devops-labs.git
+    targetRevision: master
+    path: helm/devops-api
+
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: devops-lab
+
+  syncPolicy:
+    automated:
+      prune: true       # remove recursos que saíram do Git
+      selfHeal: true     # desfaz mudanças manuais feitas direto no cluster
+    syncOptions:
+      - CreateNamespace=true

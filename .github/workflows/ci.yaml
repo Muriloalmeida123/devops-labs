@@ -80,3 +80,34 @@ jobs:
         run: |
           docker push $IMAGE:$SHORT_SHA
           docker push $IMAGE:latest
+
+  update-manifest:
+    name: Update Helm values (GitOps)
+    runs-on: ubuntu-latest
+    needs: build-and-push
+    if: github.event_name == 'push'
+    permissions:
+      contents: write     # precisa gravar de volta no repositório
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Compute short SHA
+        run: |
+          SHA=${{ github.sha }}
+          echo "SHORT_SHA=${SHA:0:7}" >> "$GITHUB_ENV"
+
+      - name: Bump image tag in values.yaml
+        run: |
+          sed -i "s/^\(\s*tag:\s*\).*/\1${SHORT_SHA}/" helm/devops-api/values.yaml
+          cat helm/devops-api/values.yaml
+
+      - name: Commit and push
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add helm/devops-api/values.yaml
+          git diff --cached --quiet && echo "Nada mudou" && exit 0
+          git commit -m "chore: bump image to ${SHORT_SHA} [skip ci]"
+          git push
